@@ -1,35 +1,39 @@
 #include "TourModifier.h"
 
-void TourModifier::initialize(const std::vector<primitives::point_id_t>& initial_tour)
+TourModifier::TourModifier(const std::vector<primitives::point_id_t>& initial_tour)
+    : m_order(initial_tour)
+    , m_adjacents(initial_tour.size(), {constants::invalid_point, constants::invalid_point})
+    , m_next(initial_tour.size(), constants::invalid_point)
 {
-    m_adjacents.resize(initial_tour.size());
-    for (auto& a : m_adjacents)
-    {
-        a = {constants::invalid_point, constants::invalid_point};
-    }
     auto prev = initial_tour.back();
     for (auto p : initial_tour)
     {
         create_adjacency(p, prev);
         prev = p;
     }
-    m_next.resize(initial_tour.size());
     update_next();
 }
 
-std::vector<primitives::point_id_t> TourModifier::current_tour() const
+std::vector<primitives::point_id_t> TourModifier::order() const
 {
-    std::vector<primitives::point_id_t> points(m_next.size(), constants::invalid_point);
-    constexpr primitives::point_id_t start_point{0};
-    primitives::point_id_t i {start_point};
-    primitives::point_id_t sequence {0};
+    constexpr primitives::point_id_t start {0};
+    primitives::point_id_t current {start};
+    std::vector<primitives::point_id_t> ordered_points;
     do
     {
-        points[sequence] = i;
-        i = m_next[i];
-        ++sequence;
-    } while (i != start_point);
-    return points;
+        ordered_points.push_back(current);
+        current = m_next[current];
+    } while (current != start);
+    return ordered_points;
+}
+
+void TourModifier::move(primitives::point_id_t a, primitives::point_id_t b)
+{
+    break_adjacency(a);
+    break_adjacency(b);
+    create_adjacency(a, b);
+    create_adjacency(m_next[a], m_next[b]);
+    update_next();
 }
 
 void TourModifier::move(const Move& move, std::vector<Segment>& segments)
@@ -139,11 +143,21 @@ void TourModifier::fill_adjacent(primitives::point_id_t point, primitives::point
     {
         m_adjacents[point].back() = new_adjacent;
     }
+    else
+    {
+        std::cout << "No availble slot for new adjacent." << std::endl;
+        std::abort();
+    }
 }
 
 void TourModifier::break_adjacency(const Connection& c)
 {
     break_adjacency(c.a, c.b);
+}
+
+void TourModifier::break_adjacency(primitives::point_id_t i)
+{
+    break_adjacency(i, m_next[i]);
 }
 
 void TourModifier::break_adjacency(primitives::point_id_t point1, primitives::point_id_t point2)
