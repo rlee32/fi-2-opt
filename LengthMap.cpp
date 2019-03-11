@@ -1,14 +1,16 @@
 #include "LengthMap.h"
 
-LengthMap::LengthMap(const LengthCalculator& calculator
-    , const std::vector<primitives::point_id_t>& ordered_points)
-    : m_calculator(calculator)
+LengthMap::LengthMap(const std::vector<primitives::point_id_t>& ordered_points
+    , const std::vector<primitives::space_t>& x
+    , const std::vector<primitives::space_t>& y)
+    : m_x(x)
+    , m_y(y)
     , m_lengths(ordered_points.size())
 {
     auto prev {ordered_points.back()};
     for (auto current : ordered_points)
     {
-        auto length {m_calculator.length(prev, current)};
+        auto length {compute_length(prev, current)};
         insert(prev, current, length);
         prev = current;
     }

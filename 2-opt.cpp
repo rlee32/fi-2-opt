@@ -1,4 +1,3 @@
-#include "LengthCalculator.h"
 #include "LengthMap.h"
 #include "TourModifier.h"
 #include "fileio/fileio.h"
@@ -23,25 +22,21 @@ int main(int argc, const char** argv)
     const auto initial_tour = fileio::initial_tour(argc, argv, x.size());
 
     // Initialize distance table.
-    LengthCalculator c(x, y);
-    TourModifier tour_modifier(initial_tour);
+    TourModifier tour_modifier(initial_tour, x, y);
 
     // Initialize segments.
-    LengthMap length_map(c, initial_tour);
     std::vector<Segment> segments;
     for (auto id : initial_tour)
     {
-        segments.emplace_back(id, tour_modifier.next(id), c);
+        segments.emplace_back(id, tour_modifier.next(id), tour_modifier.length_map());
     }
 
     // Initial tour stats.
-    std::cout << "Largest segment length: " << std::crbegin(segments)->length << std::endl;
-    std::cout << "Smallest segment length: " << std::cbegin(segments)->length << std::endl;
     const auto initial_tour_length = verify::tour_length(segments);
     std::cout << "Initial tour length: " << initial_tour_length << std::endl;
     std::cout << "Average segment length: " << initial_tour_length / static_cast<primitives::space_t>(segments.size()) << std::endl;
     // Optimization loop.
     auto filename = utility::extract_filename(argv[1]);
-    solver::hill_climb(initial_tour, segments, c, filename);
+    solver::hill_climb(initial_tour, segments, tour_modifier, filename);
     return 0;
 }

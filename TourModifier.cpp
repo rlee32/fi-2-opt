@@ -1,7 +1,10 @@
 #include "TourModifier.h"
 
-TourModifier::TourModifier(const std::vector<primitives::point_id_t>& initial_tour)
-    : m_order(initial_tour)
+TourModifier::TourModifier(const std::vector<primitives::point_id_t>& initial_tour
+    , const std::vector<primitives::space_t>& x
+    , const std::vector<primitives::space_t>& y)
+    : m_length_map(initial_tour, x, y)
+    , m_order(initial_tour)
     , m_adjacents(initial_tour.size(), {constants::invalid_point, constants::invalid_point})
     , m_next(initial_tour.size(), constants::invalid_point)
 {

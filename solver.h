@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LengthCalculator.h"
+#include "LengthMap.h"
 #include "Move.h"
 #include "Segment.h"
 #include "Solution.h"
@@ -16,7 +16,7 @@
 
 namespace solver {
 
-inline Move first_improvement(const std::vector<Segment>& segments, const LengthCalculator& dt)
+inline Move first_improvement(const std::vector<Segment>& segments, const LengthMap& dt)
 {
     for (auto s1 = std::crbegin(segments); s1 != std::prev(std::crend(segments)); ++s1)
     {
@@ -50,11 +50,10 @@ inline Move first_improvement(const std::vector<Segment>& segments, const Length
 
 inline Solution hill_climb(const std::vector<primitives::point_id_t>& ordered_points
     , std::vector<Segment>& segments
-    , const LengthCalculator& dt
+    , TourModifier& tour_modifier
     , const std::string save_file_prefix)
 {
-    TourModifier tour_modifier(ordered_points);
-    auto move = first_improvement(segments, dt);
+    auto move = first_improvement(segments, tour_modifier.length_map());
     int iteration{1};
     while (move.improvement > 0)
     {
@@ -78,7 +77,7 @@ inline Solution hill_climb(const std::vector<primitives::point_id_t>& ordered_po
             fileio::write_ordered_points(tour_modifier.order()
                 , "saves/" + save_file_prefix + "_" + std::to_string(length) + ".txt");
         }
-        move = first_improvement(segments, dt);
+        move = first_improvement(segments, tour_modifier.length_map());
         ++iteration;
     }
     return {tour_modifier.order(), verify::tour_length(segments)};
