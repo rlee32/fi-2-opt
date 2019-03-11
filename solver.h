@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DistanceCalculator.h"
+#include "LengthCalculator.h"
 #include "Move.h"
 #include "Segment.h"
 #include "Solution.h"
@@ -16,7 +16,7 @@
 
 namespace solver {
 
-inline Move first_improvement(const std::vector<Segment>& segments, const DistanceCalculator& dt)
+inline Move first_improvement(const std::vector<Segment>& segments, const LengthCalculator& dt)
 {
     for (auto s1 = std::crbegin(segments); s1 != std::prev(std::crend(segments)); ++s1)
     {
@@ -50,7 +50,7 @@ inline Move first_improvement(const std::vector<Segment>& segments, const Distan
 
 inline Solution hill_climb(const std::vector<primitives::point_id_t>& ordered_points
     , std::vector<Segment>& segments
-    , const DistanceCalculator& dt
+    , const LengthCalculator& dt
     , const std::string save_file_prefix)
 {
     TourModifier tour_modifier(ordered_points);

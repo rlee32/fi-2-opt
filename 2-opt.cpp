@@ -1,4 +1,5 @@
-#include "DistanceCalculator.h"
+#include "LengthCalculator.h"
+#include "LengthMap.h"
 #include "TourModifier.h"
 #include "fileio/fileio.h"
 #include "primitives.h"
@@ -14,6 +15,7 @@ int main(int argc, const char** argv)
         std::cout << "Arguments: point_set_file_path optional_tour_file_path" << std::endl;
         return 0;
     }
+
     // Read input files.
     const auto coordinates {fileio::read_coordinates(argv[1])};
     const auto& x {coordinates[0]};
@@ -21,14 +23,15 @@ int main(int argc, const char** argv)
     const auto initial_tour = fileio::initial_tour(argc, argv, x.size());
 
     // Initialize distance table.
-    DistanceCalculator dt(x, y);
+    LengthCalculator c(x, y);
     TourModifier tour_modifier(initial_tour);
 
     // Initialize segments.
+    LengthMap length_map(c, initial_tour);
     std::vector<Segment> segments;
     for (auto id : initial_tour)
     {
-        segments.emplace_back(id, tour_modifier.next(id), dt);
+        segments.emplace_back(id, tour_modifier.next(id), c);
     }
 
     // Initial tour stats.
@@ -39,6 +42,6 @@ int main(int argc, const char** argv)
     std::cout << "Average segment length: " << initial_tour_length / static_cast<primitives::space_t>(segments.size()) << std::endl;
     // Optimization loop.
     auto filename = utility::extract_filename(argv[1]);
-    solver::hill_climb(initial_tour, segments, dt, filename);
+    solver::hill_climb(initial_tour, segments, c, filename);
     return 0;
 }

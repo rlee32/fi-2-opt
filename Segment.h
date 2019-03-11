@@ -4,7 +4,7 @@
 // A tour is made of a number of segments equal to the number of cities.
 
 #include "Connection.h"
-#include "DistanceCalculator.h"
+#include "LengthCalculator.h"
 #include "primitives.h"
 
 #include <ostream>
@@ -14,13 +14,13 @@ struct Segment : Connection
 {
 public:
     Segment() = default;
-    Segment(primitives::point_id_t a, primitives::point_id_t b, primitives::length_t length, const DistanceCalculator& dt)
+    Segment(primitives::point_id_t a, primitives::point_id_t b, primitives::length_t length, const LengthCalculator& dt)
         : Connection(a, b), length(length)
         , xm(0.5 * (dt.x(a) + dt.x(b)))
         , ym(0.5 * (dt.y(a) + dt.y(b))) {}
-    Segment(primitives::point_id_t a, primitives::point_id_t b, const DistanceCalculator& dt)
-        : Segment(a, b, dt.compute_length(a, b), dt) {}
-    Segment(const Connection& c, const DistanceCalculator& dt) : Segment(c.a, c.b, dt) {}
+    Segment(primitives::point_id_t a, primitives::point_id_t b, const LengthCalculator& dt)
+        : Segment(a, b, dt.length(a, b), dt) {}
+    Segment(const Connection& c, const LengthCalculator& dt) : Segment(c.a, c.b, dt) {}
 
     primitives::length_t length{0};
     primitives::space_t xm{0}; // x-coordinate of segment midpoint.
