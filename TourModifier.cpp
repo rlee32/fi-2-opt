@@ -17,6 +17,21 @@ TourModifier::TourModifier(const std::vector<primitives::point_id_t>& initial_to
     update_next();
 }
 
+primitives::length_t TourModifier::length() const
+{
+    primitives::length_t sum {0};
+    for (primitives::point_id_t i {0}; i < m_next.size(); ++i)
+    {
+        sum += m_length_map.length(i, m_next[i]);
+    }
+    return sum;
+}
+
+primitives::length_t TourModifier::length(primitives::point_id_t i) const
+{
+    return m_length_map.length(i, m_next[i]);
+}
+
 std::vector<primitives::point_id_t> TourModifier::order() const
 {
     constexpr primitives::point_id_t start {0};
@@ -32,6 +47,10 @@ std::vector<primitives::point_id_t> TourModifier::order() const
 
 void TourModifier::move(primitives::point_id_t a, primitives::point_id_t b)
 {
+    m_length_map.erase(a, m_next[a]);
+    m_length_map.erase(b, m_next[b]);
+    m_length_map.insert(a, b);
+    m_length_map.insert(m_next[a], m_next[b]);
     break_adjacency(a);
     break_adjacency(b);
     create_adjacency(a, b);

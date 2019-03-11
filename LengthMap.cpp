@@ -10,17 +10,19 @@ LengthMap::LengthMap(const std::vector<primitives::point_id_t>& ordered_points
     auto prev {ordered_points.back()};
     for (auto current : ordered_points)
     {
-        auto length {compute_length(prev, current)};
-        insert(prev, current, length);
+        insert(prev, current);
         prev = current;
     }
 }
 
-void LengthMap::insert(primitives::point_id_t a
-    , primitives::point_id_t b
-    , primitives::length_t length)
+primitives::length_t LengthMap::length(primitives::point_id_t a, primitives::point_id_t b) const
+{
+    return m_lengths[std::min(a, b)].find(std::max(a, b))->second;
+}
+
+void LengthMap::insert(primitives::point_id_t a, primitives::point_id_t b)
 {
     auto& map {m_lengths[std::min(a, b)]};
-    map[std::max(a, b)] = length;
+    map[std::max(a, b)] = compute_length(a, b);
 }
 

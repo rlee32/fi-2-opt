@@ -2,8 +2,8 @@
 
 #include "LengthMap.h"
 #include "Move.h"
+#include "Swap.h"
 #include "Segment.h"
-#include "Solution.h"
 #include "TourModifier.h"
 #include "constants.h"
 #include "fileio/fileio.h"
@@ -48,7 +48,37 @@ inline Move first_improvement(const std::vector<Segment>& segments, const Length
     return {};
 }
 
-inline Solution hill_climb(const std::vector<primitives::point_id_t>& ordered_points
+inline Swap first_improvement(const TourModifier& tour)
+{
+    constexpr primitives::point_id_t start {0};
+    for (primitives::point_id_t i {start}; i < tour.size(); ++i)
+    {
+        const auto first_old_length {tour.length(i)};
+        auto j {tour.next(tour.next(i))};
+        while (j != start)
+        {
+            const auto current_length {first_old_length + tour.length(j)};
+            auto new_length {tour.length_map().compute_length(i, j)};
+            if (new_length > current_length)
+            {
+                continue;
+            }
+            new_length += tour.length_map().compute_length(tour.next(i), tour.next(j));
+            if (new_length > current_length)
+            {
+                continue;
+            }
+            if (new_length < current_length)
+            {
+                return {i, j, current_length - new_length};
+            }
+            j = tour.next(j);
+        }
+    }
+    return {};
+}
+
+inline void hill_climb(const std::vector<primitives::point_id_t>& ordered_points
     , std::vector<Segment>& segments
     , TourModifier& tour_modifier
     , const std::string save_file_prefix)
@@ -80,7 +110,6 @@ inline Solution hill_climb(const std::vector<primitives::point_id_t>& ordered_po
         move = first_improvement(segments, tour_modifier.length_map());
         ++iteration;
     }
-    return {tour_modifier.order(), verify::tour_length(segments)};
 }
 
 } // namespace solver

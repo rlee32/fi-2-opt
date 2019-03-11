@@ -26,8 +26,12 @@ public:
     void move(primitives::point_id_t a, primitives::point_id_t b);
     primitives::point_id_t next(primitives::point_id_t i) const { return m_next[i]; }
     std::vector<primitives::point_id_t> order() const;
+    primitives::point_id_t size() const { return m_next.size(); }
 
     const LengthMap& length_map() const { return m_length_map; }
+
+    primitives::length_t length() const;
+    primitives::length_t length(primitives::point_id_t i) const;
 
 private:
     LengthMap m_length_map;

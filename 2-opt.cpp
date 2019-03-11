@@ -32,9 +32,9 @@ int main(int argc, const char** argv)
     }
 
     // Initial tour stats.
-    const auto initial_tour_length = verify::tour_length(segments);
+    const auto initial_tour_length {tour_modifier.length()};
     std::cout << "Initial tour length: " << initial_tour_length << std::endl;
-    std::cout << "Average segment length: " << initial_tour_length / static_cast<primitives::space_t>(segments.size()) << std::endl;
+
     // Optimization loop.
     auto filename = utility::extract_filename(argv[1]);
     solver::hill_climb(initial_tour, segments, tour_modifier, filename);

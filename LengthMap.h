@@ -14,9 +14,9 @@ public:
         , const std::vector<primitives::space_t>& x
         , const std::vector<primitives::space_t>& y);
 
-    void insert(primitives::point_id_t a
-        , primitives::point_id_t b
-        , primitives::length_t);
+    primitives::length_t length(primitives::point_id_t a, primitives::point_id_t b) const;
+
+    void insert(primitives::point_id_t a, primitives::point_id_t b);
 
     primitives::length_t compute_length(primitives::point_id_t a, primitives::point_id_t b) const
     {
@@ -24,6 +24,11 @@ public:
         auto dy = m_y[a] - m_y[b];
         auto exact = std::sqrt(dx * dx + dy * dy);
         return exact + 0.5; // return type cast.
+    }
+
+    void erase(primitives::point_id_t a, primitives::point_id_t b)
+    {
+        m_lengths[std::min(a, b)].erase(std::max(a, b));
     }
 
     const primitives::space_t& x(primitives::point_id_t i) const { return m_x[i]; }
