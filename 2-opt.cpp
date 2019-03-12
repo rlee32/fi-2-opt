@@ -1,6 +1,6 @@
 #include "LengthMap.h"
 #include "TourModifier.h"
-#include "fileio/fileio.h"
+#include "fileio.h"
 #include "primitives.h"
 #include "solver.h"
 #include "utility.h"
