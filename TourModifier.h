@@ -9,7 +9,6 @@
 
 #include "Connection.h"
 #include "LengthMap.h"
-#include "Move.h"
 #include "Segment.h"
 #include "constants.h"
 #include "primitives.h"
@@ -22,9 +21,9 @@ public:
         , const std::vector<primitives::space_t>& x
         , const std::vector<primitives::space_t>& y);
 
-    void move(const Move&, std::vector<Segment>& segments);
     void move(primitives::point_id_t a, primitives::point_id_t b);
     primitives::point_id_t next(primitives::point_id_t i) const { return m_next[i]; }
+    primitives::point_id_t prev(primitives::point_id_t i) const;
     std::vector<primitives::point_id_t> order() const;
     primitives::point_id_t size() const { return m_next.size(); }
 
@@ -40,7 +39,6 @@ private:
     std::vector<primitives::point_id_t> m_next;
 
     void update_next();
-    void reorder(const Move&);
     void align_segments(std::vector<Segment>&) const;
 
     primitives::point_id_t get_other(primitives::point_id_t point, primitives::point_id_t adjacent) const;
@@ -52,3 +50,4 @@ private:
     void break_adjacency(primitives::point_id_t point1, primitives::point_id_t point2);
     void vacate_adjacent_slot(primitives::point_id_t point, primitives::point_id_t adjacent, int slot);
 };
+

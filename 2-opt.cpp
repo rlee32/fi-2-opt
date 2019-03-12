@@ -36,7 +36,16 @@ int main(int argc, const char** argv)
     std::cout << "Initial tour length: " << initial_tour_length << std::endl;
 
     // Optimization loop.
-    auto filename = utility::extract_filename(argv[1]);
-    solver::hill_climb(initial_tour, segments, tour_modifier, filename);
+    solver::hill_climb(tour_modifier);
+
+    // Save result.
+    const auto final_length {tour_modifier.length()};
+    std::cout << "final length: " << final_length << std::endl;
+    if (initial_tour_length > final_length)
+    {
+        auto save_file_prefix {utility::extract_filename(argv[1])};
+        fileio::write_ordered_points(tour_modifier.order()
+            , "saves/" + save_file_prefix + "_" + std::to_string(final_length) + ".txt");
+    }
     return 0;
 }

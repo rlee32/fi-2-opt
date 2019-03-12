@@ -17,6 +17,24 @@ TourModifier::TourModifier(const std::vector<primitives::point_id_t>& initial_to
     update_next();
 }
 
+primitives::point_id_t TourModifier::prev(primitives::point_id_t i) const
+{
+    const auto next {m_next[i]};
+    if (m_adjacents[i][0] == next)
+    {
+        return m_adjacents[i][1];
+    }
+    else if (m_adjacents[i][1] == next)
+    {
+        return m_adjacents[i][0];
+    }
+    else
+    {
+        std::cout << __func__ << ": error: could not determine previous point." << std::endl;
+        std::abort();
+    }
+}
+
 primitives::length_t TourModifier::length() const
 {
     primitives::length_t sum {0};
@@ -37,10 +55,17 @@ std::vector<primitives::point_id_t> TourModifier::order() const
     constexpr primitives::point_id_t start {0};
     primitives::point_id_t current {start};
     std::vector<primitives::point_id_t> ordered_points;
+    primitives::point_id_t count {0};
     do
     {
         ordered_points.push_back(current);
         current = m_next[current];
+        if (count > m_next.size())
+        {
+            std::cout << __func__ << ": error: too many traversals." << std::endl;
+            std::abort();
+        }
+        ++count;
     } while (current != start);
     return ordered_points;
 }
@@ -56,32 +81,6 @@ void TourModifier::move(primitives::point_id_t a, primitives::point_id_t b)
     create_adjacency(a, b);
     create_adjacency(m_next[a], m_next[b]);
     update_next();
-}
-
-void TourModifier::move(const Move& move, std::vector<Segment>& segments)
-{
-    reorder(move);
-    update_next();
-    for (auto it {std::begin(segments)}; it != std::end(segments); ++it)
-    {
-        if (move.old_segments[0] == *it)
-        {
-            segments.erase(it);
-            break;
-        }
-    }
-    for (auto it {std::begin(segments)}; it != std::end(segments); ++it)
-    {
-        if (move.old_segments[1] == *it)
-        {
-            segments.erase(it);
-            break;
-        }
-    }
-    segments.push_back(move.new_segments[0]);
-    segments.push_back(move.new_segments[1]);
-    // align after adding / removing segments.
-    align_segments(segments);
 }
 
 void TourModifier::align_segments(std::vector<Segment>& segments) const
@@ -119,16 +118,6 @@ void TourModifier::update_next()
         current = m_next[current];
         m_next[current] = get_other(current, prev);
     } while (current != 0); // tour cycle condition.
-}
-
-void TourModifier::reorder(const Move& move)
-{
-    // break old segments.
-    break_adjacency(move.old_segments[0]);
-    break_adjacency(move.old_segments[1]);
-    // form new segments.
-    create_adjacency(move.new_segments[0]);
-    create_adjacency(move.new_segments[1]);
 }
 
 primitives::point_id_t TourModifier::get_other(primitives::point_id_t point, primitives::point_id_t adjacent) const
