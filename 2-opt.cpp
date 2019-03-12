@@ -20,10 +20,8 @@ int main(int argc, const char** argv)
     const auto& y {coordinates[1]};
     const auto initial_tour = fileio::initial_tour(argc, argv, x.size());
 
-    // Initialize distance table.
+    // Initialize tour modifier.
     TourModifier tour_modifier(initial_tour, x, y);
-
-    // Initial tour stats.
     const auto initial_tour_length {tour_modifier.length()};
     std::cout << "Initial tour length: " << initial_tour_length << std::endl;
 
