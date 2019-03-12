@@ -1,6 +1,8 @@
 This aims to be as simple as possible for a 2-opt hill-climbing solver: O(n^2) and first-improvement.
 This is intended to serve as a testing ground for perturbation strategies.
 
+Use plot.py to visualize tsp instances and tours.
+
 Compilation:
 1. Make sure "CXX" in "makefile" is set to the desired compiler.
 2. Run "make".
