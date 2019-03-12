@@ -108,11 +108,6 @@ primitives::point_id_t TourModifier::get_other(primitives::point_id_t point, pri
     }
 }
 
-void TourModifier::create_adjacency(const Connection& c)
-{
-    create_adjacency(c.a, c.b);
-}
-
 void TourModifier::create_adjacency(primitives::point_id_t point1, primitives::point_id_t point2)
 {
     fill_adjacent(point1, point2);
@@ -134,11 +129,6 @@ void TourModifier::fill_adjacent(primitives::point_id_t point, primitives::point
         std::cout << "No availble slot for new adjacent." << std::endl;
         std::abort();
     }
-}
-
-void TourModifier::break_adjacency(const Connection& c)
-{
-    break_adjacency(c.a, c.b);
 }
 
 void TourModifier::break_adjacency(primitives::point_id_t i)

@@ -7,7 +7,6 @@
 #include <utility> // swap
 #include <vector>
 
-#include "Connection.h"
 #include "LengthMap.h"
 #include "constants.h"
 #include "primitives.h"
@@ -40,10 +39,8 @@ private:
     void update_next();
 
     primitives::point_id_t get_other(primitives::point_id_t point, primitives::point_id_t adjacent) const;
-    void create_adjacency(const Connection& c);
     void create_adjacency(primitives::point_id_t point1, primitives::point_id_t point2);
     void fill_adjacent(primitives::point_id_t point, primitives::point_id_t new_adjacent);
-    void break_adjacency(const Connection& c);
     void break_adjacency(primitives::point_id_t i);
     void break_adjacency(primitives::point_id_t point1, primitives::point_id_t point2);
     void vacate_adjacent_slot(primitives::point_id_t point, primitives::point_id_t adjacent, int slot);
