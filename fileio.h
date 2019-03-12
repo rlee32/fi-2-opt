@@ -10,6 +10,23 @@
 
 namespace fileio {
 
+// Removes directories and extension from a file path.
+inline std::string extract_filename(const char* file_path)
+{
+    std::string filename(file_path);
+    auto last_slash = filename.rfind("/");
+    if (last_slash != std::string::npos)
+    {
+        filename = filename.substr(last_slash + 1);
+    }
+    auto first_period = filename.rfind(".");
+    if (first_period != std::string::npos)
+    {
+        filename = filename.substr(0, first_period);
+    }
+    return filename;
+}
+
 inline void write_ordered_points(const std::vector<primitives::point_id_t>& ordered_points
     , const std::string output_filename)
 {

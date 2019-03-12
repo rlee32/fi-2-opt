@@ -3,7 +3,6 @@
 #include "fileio.h"
 #include "primitives.h"
 #include "solver.h"
-#include "utility.h"
 
 #include <iostream>
 
@@ -36,7 +35,7 @@ int main(int argc, const char** argv)
     std::cout << "final length: " << final_length << std::endl;
     if (initial_tour_length > final_length)
     {
-        auto save_file_prefix {utility::extract_filename(argv[1])};
+        auto save_file_prefix {fileio::extract_filename(argv[1])};
         fileio::write_ordered_points(tour_modifier.order()
             , "saves/" + save_file_prefix + "_" + std::to_string(final_length) + ".txt");
     }
