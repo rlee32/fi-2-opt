@@ -83,31 +83,6 @@ void TourModifier::move(primitives::point_id_t a, primitives::point_id_t b)
     update_next();
 }
 
-void TourModifier::align_segments(std::vector<Segment>& segments) const
-{
-    // std::sets only use const iterators, as element values determine order.
-    std::vector<Segment> deleted;
-    auto it = std::cbegin(segments);
-    while (it != std::cend(segments))
-    {
-        if (it->a == m_next[it->b])
-        {
-            deleted.push_back(*it);
-            std::swap(deleted.back().a, deleted.back().b);
-            it = segments.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-
-    }
-    for (const auto& d : deleted)
-    {
-        segments.push_back(d);
-    }
-}
-
 void TourModifier::update_next()
 {
     primitives::point_id_t current{0};

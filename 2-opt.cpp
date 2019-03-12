@@ -24,13 +24,6 @@ int main(int argc, const char** argv)
     // Initialize distance table.
     TourModifier tour_modifier(initial_tour, x, y);
 
-    // Initialize segments.
-    std::vector<Segment> segments;
-    for (auto id : initial_tour)
-    {
-        segments.emplace_back(id, tour_modifier.next(id), tour_modifier.length_map());
-    }
-
     // Initial tour stats.
     const auto initial_tour_length {tour_modifier.length()};
     std::cout << "Initial tour length: " << initial_tour_length << std::endl;

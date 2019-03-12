@@ -9,7 +9,6 @@
 
 #include "Connection.h"
 #include "LengthMap.h"
-#include "Segment.h"
 #include "constants.h"
 #include "primitives.h"
 
@@ -39,7 +38,6 @@ private:
     std::vector<primitives::point_id_t> m_next;
 
     void update_next();
-    void align_segments(std::vector<Segment>&) const;
 
     primitives::point_id_t get_other(primitives::point_id_t point, primitives::point_id_t adjacent) const;
     void create_adjacency(const Connection& c);

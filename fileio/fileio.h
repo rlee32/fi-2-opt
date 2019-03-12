@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Tour.h"
 #include "primitives.h"
 
 #include <array>
@@ -26,7 +25,50 @@ inline void write_ordered_points(const std::vector<primitives::point_id_t>& orde
 
 inline std::vector<primitives::point_id_t> read_ordered_points(const char* file_path)
 {
-    return Tour(file_path).point_ids();
+    std::cout << "\nReading tour file: " << file_path << std::endl;
+    std::ifstream file_stream(file_path);
+    if (not file_stream.is_open())
+    {
+        std::cout << __func__ << ": error: could not open file: "
+            << file_path << std::endl;
+        std::abort();
+    }
+    size_t point_count{0};
+    // header.
+    std::string line;
+    while (not file_stream.eof())
+    {
+        std::getline(file_stream, line);
+        if (line.find("TOUR_SECTION") != std::string::npos) // header end.
+        {
+            break;
+        }
+        if (line.find("DIMENSION") != std::string::npos) // point count.
+        {
+            std::string point_count_string = line.substr(line.find(':') + 1);
+            point_count = std::stoi(point_count_string);
+            std::cout << "Number of points according to header: " << point_count << std::endl;
+        }
+    }
+    if (point_count == 0)
+    {
+        std::cout << __func__ << ": error: no DIMENSION header in the tour file." << std::endl;
+        std::abort();
+    }
+    // point ids.
+    std::vector<primitives::point_id_t> point_ids;
+    while (not file_stream.eof())
+    {
+        if (point_ids.size() >= point_count)
+        {
+            break;
+        }
+        std::getline(file_stream, line);
+        primitives::point_id_t point_id = std::stoi(line);
+        point_ids.push_back(point_id - 1); // subtract one to make point id == index.
+    }
+    std::cout << "Finished reading tour file.\n" << std::endl;
+    return point_ids;
 }
 
 inline std::vector<primitives::point_id_t> default_tour(primitives::point_id_t point_count)
